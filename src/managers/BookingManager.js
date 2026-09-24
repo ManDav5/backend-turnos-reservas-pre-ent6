@@ -1,8 +1,14 @@
 import fs from 'fs/promises';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import {randomUUID} from "node:crypto";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const filePath = path.resolve(__dirname, '../data/bookings.json');
+
 export class BookingManager {
-  constructor(filePath) {
+  constructor() {
     this.path = filePath;
   }
 
@@ -11,7 +17,7 @@ export class BookingManager {
       const data = await fs.readFile(this.path, 'utf-8');
       return JSON.parse(data);
     } catch (error) {
-      // Si el archivo no existe o está vacío, inicializa con array vacío
+
       if (error.code === 'ENOENT') {
         return [];
       }
@@ -32,7 +38,7 @@ export class BookingManager {
       date,
       time,
       status,
-      services: [] // Siempre arranca con el array de servicios vacío
+      services: [] 
     };
     bookings.push(newBooking);
     await this.#writeFile(bookings);

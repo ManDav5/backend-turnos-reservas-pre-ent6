@@ -1,8 +1,14 @@
 import fs from "fs/promises";
 import {randomUUID} from "node:crypto"
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const filePath = path.resolve(__dirname, '../data/services.json');
 
 export class ServiceManager {
-    constructor(filePath){
+    constructor(){
         this.path=filePath;
     }
 
