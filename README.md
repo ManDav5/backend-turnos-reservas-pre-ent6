@@ -4,29 +4,48 @@ Primera versión funcional del backend para la gestión de servicios y reservas 
 
 ---
 
-## 📁 Estructura del Proyecto
+## Estructura del Proyecto
+
+El proyecto está diseñado bajo una arquitectura en capas, separando responsabilidades entre ruteo, control HTTP, lógica de negocio, abstracción de datos y persistencia:
 
 ```text
-mi-proyecto/
 ├── src/
 │   ├── config/
-│   │   └── env.config.js
+│   │   └── env.config.js          # Configuración y variables de entorno
+│   ├── controllers/
+│   │   ├── bookings.controller.js  # Controladores de reservas (req, res, status HTTP)
+│   │   └── services.controller.js  # Controladores de servicios (req, res, status HTTP)
+│   ├── dao/
+│   │   ├── bookings.dao.js         # Persistencia y acceso a bookings.json
+│   │   └── services.dao.js         # Persistencia y acceso a services.json
 │   ├── data/
-│   │   ├── bookings.json
-│   │   └── services.json
-│   ├── managers/
-│   │   ├── BookingManager.js
-│   │   └── ServiceManager.js
+│   │   ├── bookings.json          # Archivo de datos para reservas
+│   │   └── services.json          # Archivo de datos para servicios
+│   ├── repositories/
+│   │   ├── bookings.repository.js  # Abstracción de acceso a datos de reservas
+│   │   └── services.repository.js  # Abstracción de acceso a datos de servicios
 │   ├── routes/
-│   │   ├── bookings.router.js
-│   │   └── services.router.js
-│   ├── app.js
-│   └── server.js
-├── .env.example
-├── .gitignore
+│   │   ├── bookings.router.js      # Definición de rutas y endpoints de reservas
+│   │   └── services.router.js      # Definición de rutas y endpoints de servicios
+│   ├── services/
+│   │   ├── bookings.service.js     # Reglas y lógica de negocio de reservas
+│   │   └── services.service.js     # Reglas y lógica de negocio de servicios
+│   ├── app.js                      # Configuración de Express y middlewares
+│   └── server.js                   # Inicialización y arranque del servidor HTTP
+├── .env.example                    # Ejemplo de variables de entorno
 ├── package.json
 └── README.md
 ```
+---
+
+## Arquitectura por Capas
+
+1. **Routes (`src/routes/`)**: Define las rutas y asocia cada endpoint HTTP con su controlador.
+2. **Controllers (`src/controllers/`)**: Maneja el ciclo de solicitud y respuesta (`req`, `res`), validando entradas HTTP y códigos de estado.
+3. **Services (`src/services/`)**: Centraliza las reglas y la lógica de negocio.
+4. **Repositories (`src/repositories/`)**: Abstrae el acceso a datos de la lógica de negocio.
+5. **DAOs (`src/dao/`)**: Gestiona la persistencia y lectura directa sobre los archivos JSON en `src/data/`.
+
 ---
 
 ## ⚙️ Requisitos e Instalación
@@ -66,7 +85,7 @@ npm start
 
 | Método | Endpoint | Descripción | Respuestas HTTP |
 | :--- | :--- | :--- | :--- |
-| **GET** | `/api/services` | Lista todos los servicios registrados. Admite filtros opcionales por query: `?category=` y `?available=` | `200`, `500` |
+| **GET** | `/api/services` | Lista todos los servicios registrados. Admite límite opcional por query: `?limit=` | `200`, `400`, `500` |
 | **GET** | `/api/services/:sid` | Obtiene el detalle de un servicio por su ID | `200`, `404`, `500` |
 | **POST** | `/api/services` | Crea y registra un nuevo servicio con un ID generado automáticamente mediante UUID | `201`, `400`, `500` |
 | **PUT** | `/api/services/:sid` | Actualiza las propiedades de un servicio existente sin alterar su ID | `200`, `404`, `500` |
