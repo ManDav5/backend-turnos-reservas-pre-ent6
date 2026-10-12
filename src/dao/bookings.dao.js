@@ -1,62 +1,27 @@
-import fs from 'fs/promises';
-import path from 'path';
-import crypto from 'crypto';
+import Booking from "../models/booking.model.js";
 
 export class BookingsDao {
-  constructor() {
-    this.path = path.resolve('src/data/bookings.json');
-  }
-
-  async _readFile() {
-    try {
-      const data = await fs.readFile(this.path, 'utf-8');
-      return JSON.parse(data);
-    } catch (error) {
-      if (error.code === 'ENOENT') {
-        await fs.writeFile(this.path, JSON.stringify([], null, 2), 'utf-8');
-        return [];
-      }
-      throw error;
-    }
-  }
-
-  async _writeFile(data) {
-    await fs.writeFile(this.path, JSON.stringify(data, null, 2), 'utf-8');
-  }
-
-  async create(bookingData) {
-    const bookings = await this._readFile();
-
-    const newBooking = {
-      id: crypto.randomUUID(),
-      clientName: bookingData.clientName,
-      clientEmail: bookingData.clientEmail,
-      date: bookingData.date,
-      time: bookingData.time,
-      status: bookingData.status || 'pending',
-      services: []
-    };
-
-    bookings.push(newBooking);
-    await this._writeFile(bookings);
-    return newBooking;
+  async getAll() {
+    return await Booking.find().populate("service");
   }
 
   async getById(id) {
-    const bookings = await this._readFile();
-    return bookings.find((b) => b.id === id) || null;
+    return await Booking.findById(id).populate("service");
   }
 
-  async update(id, updatedBooking) {
-    const bookings = await this._readFile();
-    const index = bookings.findIndex((b) => b.id === id);
+  async create(bookingData) {
+    return await Booking.create(bookingData);
+  }
 
-    if (index === -1) {
-      return null;
-    }
+  async update(id, updateData) {
+    return await Booking.findByIdAndUpdate(id, updateData, {
+      new: true,
+      runValidators: true
+    }).populate("service");
+  }
 
-    bookings[index] = { ...updatedBooking, id };
-    await this._writeFile(bookings);
-    return bookings[index];
+  async delete(id) {
+    const deleted = await Booking.findByIdAndDelete(id);
+    return Boolean(deleted);
   }
 }
