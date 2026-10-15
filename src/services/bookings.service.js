@@ -57,3 +57,8 @@ export const addServiceToBooking = async (bookingId, serviceId) => {
 
   return await bookingsRepository.update(bookingId, booking);
 };
+
+export const getAllBookings = async () => {
+  return await bookingsRepository.getAll();
+};
+

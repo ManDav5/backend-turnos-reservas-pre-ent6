@@ -1,0 +1,58 @@
+<section>
+  <h2>Disponibilidad y Turnos Registrados</h2>
+
+  {{#if error}}
+    <p class="error-message">{{error}}</p>
+  {{/if}}
+
+  <div id="bookings-list">
+    {{#if bookings.length}}
+      <table class="bookings-table">
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>Email</th>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Servicios</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each bookings}}
+            <tr id="booking-{{this._id}}">
+              <td>{{this.clientName}}</td>
+              <td>{{this.clientEmail}}</td>
+              <td>{{this.date}}</td>
+              <td>{{this.time}}</td>
+              <td>
+                {{#if this.services.length}}
+                  <ul>
+                    {{#each this.services}}
+                      <li>
+                        {{#if this.service.name}}
+                          {{this.service.name}} (x{{this.quantity}})
+                        {{else}}
+                          ID: {{this.service}} (x{{this.quantity}})
+                        {{/if}}
+                      </li>
+                    {{/each}}
+                  </ul>
+                {{else}}
+                  <span>Sin servicios asignados</span>
+                {{/if}}
+              </td>
+              <td>
+                <span class="status-badge status-{{this.status}}">
+                  {{#if this.status}}{{this.status}}{{else}}Confirmado{{/if}}
+                </span>
+              </td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    {{else}}
+      <p id="empty-bookings">No hay reservas registradas en este momento.</p>
+    {{/if}}
+  </div>
+</section>

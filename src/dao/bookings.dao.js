@@ -1,4 +1,4 @@
-import Booking from "../models/booking.model.js";
+import Booking from "../models/booking.models.js";
 
 export class BookingsDao {
   async getAll() {

@@ -1,0 +1,76 @@
+.error-message {
+  color: #e63946;
+  background-color: #fde8e8;
+  border: 1px solid #f8b4b4;
+  padding: 0.75rem 1rem;
+  border-radius: 4px;
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+
+.bookings-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  background-color: #ffffff;
+}
+
+.bookings-table th,
+.bookings-table td {
+  border: 1px solid #e5e7eb;
+  padding: 0.75rem 1rem;
+  text-align: left;
+}
+
+.bookings-table th {
+  background-color: #f3f4f6;
+  color: #374151;
+  font-weight: 600;
+}
+
+.bookings-table tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+.bookings-table ul {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 9999px;
+  text-transform: capitalize;
+}
+
+.status-badge.status-confirmed,
+.status-badge:not([class*="status-pending"]):not([class*="status-cancelled"]) {
+  background-color: #def7ec;
+  color: #03543f;
+}
+
+.status-badge.status-pending {
+  background-color: #fef08a;
+  color: #713f12;
+}
+
+.status-badge.status-cancelled {
+  background-color: #fde8e8;
+  color: #9b1c1c;
+}
+
+.service-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background-color: #ffffff;
+}
+
+.service-card h3 {
+  margin-top: 0;
+  color: #111827;
+}
