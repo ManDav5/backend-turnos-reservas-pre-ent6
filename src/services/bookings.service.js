@@ -5,15 +5,6 @@ const bookingsRepository = new BookingsRepository();
 const servicesRepository = new ServicesRepository();
 
 export const createBooking = async (bookingData) => {
-  const { clientName, clientEmail, date, time } = bookingData;
-
-  // Validación de campos obligatorios
-  if (!clientName || !clientEmail || !date || !time) {
-    const error = new Error('Nombre, email, fecha y hora son obligatorios');
-    error.statusCode = 400;
-    throw error;
-  }
-
   return await bookingsRepository.create(bookingData);
 };
 
@@ -29,7 +20,7 @@ export const getBookingById = async (id) => {
   return booking;
 };
 
-export const addServiceToBooking = async (bookingId, serviceId) => {
+export const addServiceToBooking = async (bookingId, serviceId, quantity = 1) => {
   const service = await servicesRepository.getById(serviceId);
   if (!service) {
     const error = new Error(`Servicio con ID ${serviceId} no encontrado`);
@@ -44,21 +35,35 @@ export const addServiceToBooking = async (bookingId, serviceId) => {
     throw error;
   }
 
-  const existingServiceIndex = booking.services.findIndex((s) => s.service === serviceId);
+  const servicesList = booking.services ? [...booking.services] : [];
+
+  const existingServiceIndex = servicesList.findIndex((s) => {
+    const currentId = s.service?._id ? s.service._id.toString() : s.service?.toString();
+    return currentId === serviceId.toString();
+  });
+
+  const parsedQty = Number(quantity) > 0 ? Number(quantity) : 1;
 
   if (existingServiceIndex !== -1) {
-    booking.services[existingServiceIndex].quantity += 1;
+    servicesList[existingServiceIndex].quantity += parsedQty;
   } else {
-    booking.services.push({
+    servicesList.push({
       service: serviceId,
-      quantity: 1
+      quantity: parsedQty
     });
   }
 
-  return await bookingsRepository.update(bookingId, booking);
+  const updatedServices = servicesList.map((item) => ({
+    service: item.service?._id || item.service,
+    quantity: item.quantity
+  }));
+
+  return await bookingsRepository.update(bookingId, { services: updatedServices });
 };
 
 export const getAllBookings = async () => {
   return await bookingsRepository.getAll();
 };
+
+
 

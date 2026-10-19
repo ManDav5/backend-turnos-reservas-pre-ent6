@@ -2,11 +2,11 @@ import Booking from "../models/booking.models.js";
 
 export class BookingsDao {
   async getAll() {
-    return await Booking.find().populate("service");
+    return await Booking.find().populate("services.service");
   }
 
   async getById(id) {
-    return await Booking.findById(id).populate("service");
+    return await Booking.findById(id).populate("services.service");
   }
 
   async create(bookingData) {
@@ -17,7 +17,7 @@ export class BookingsDao {
     return await Booking.findByIdAndUpdate(id, updateData, {
       new: true,
       runValidators: true
-    }).populate("service");
+    }).populate("services.service");
   }
 
   async delete(id) {
@@ -25,3 +25,4 @@ export class BookingsDao {
     return Boolean(deleted);
   }
 }
+

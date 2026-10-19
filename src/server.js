@@ -15,8 +15,8 @@ const startServer = async () => {
     console.log(`Cliente conectado: ${socket.id}`);
 
     try {
-      const services = await getServices();
-      socket.emit('servicesList', services);
+      const result = await getServices({});
+      socket.emit('servicesList', result.docs || result);
     } catch (error) {
       console.error('Error al emitir servicios:', error.message);
     }
@@ -42,3 +42,4 @@ const startServer = async () => {
 };
 
 startServer();
+

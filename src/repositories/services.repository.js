@@ -5,6 +5,10 @@ export class ServicesRepository {
     this.dao = new ServicesDao();
   }
 
+  async paginate(filter, options) {
+    return await this.dao.paginate(filter, options);
+  }
+
   async getAll() {
     return await this.dao.getAll();
   }
@@ -25,3 +29,4 @@ export class ServicesRepository {
     return await this.dao.delete(id);
   }
 }
+

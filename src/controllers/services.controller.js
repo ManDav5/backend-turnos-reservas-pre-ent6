@@ -2,9 +2,34 @@ import * as servicesService from '../services/services.service.js';
 
 export const getServices = async (req, res) => {
   try {
-    const { limit } = req.query;
-    const services = await servicesService.getServices(limit);
-    return res.status(200).json({ status: 'success', payload: services });
+    const { limit = 10, page = 1, sort, query } = req.query;
+
+    const result = await servicesService.getServices({
+      limit: parseInt(limit, 10),
+      page: parseInt(page, 10),
+      sort,
+      query
+    });
+
+    const baseUrl = `${req.protocol}://${req.get('host')}${req.baseUrl}`;
+    const makeLink = (targetPage) => {
+      const params = new URLSearchParams(req.query);
+      params.set('page', targetPage);
+      return `${baseUrl}?${params.toString()}`;
+    };
+
+    return res.status(200).json({
+      status: 'success',
+      payload: result.docs,
+      totalPages: result.totalPages,
+      prevPage: result.prevPage,
+      nextPage: result.nextPage,
+      page: result.page,
+      hasPrevPage: result.hasPrevPage,
+      hasNextPage: result.hasNextPage,
+      prevLink: result.hasPrevPage ? makeLink(result.prevPage) : null,
+      nextLink: result.hasNextPage ? makeLink(result.nextPage) : null
+    });
   } catch (error) {
     return res.status(error.statusCode || 500).json({ status: 'error', message: error.message });
   }
@@ -22,17 +47,7 @@ export const getServiceById = async (req, res) => {
 
 export const createService = async (req, res) => {
   try {
-    const { name, description, duration, price, category, available = true } = req.body;
-
-    const newService = await servicesService.createService({
-      name,
-      description,
-      duration,
-      price,
-      category,
-      available
-    });
-
+    const newService = await servicesService.createService(req.body);
     return res.status(201).json({ status: 'success', payload: newService });
   } catch (error) {
     return res.status(error.statusCode || 400).json({ status: 'error', message: error.message });
@@ -65,5 +80,6 @@ export const deleteService = async (req, res) => {
     return res.status(error.statusCode || 404).json({ status: 'error', message: error.message });
   }
 };
+
 
 

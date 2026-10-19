@@ -1,6 +1,10 @@
 import Service from "../models/service.models.js";
 
 export class ServicesDao {
+  async paginate(filter, options) {
+    return await Service.paginate(filter, options);
+  }
+
   async getAll() {
     return await Service.find();
   }
@@ -22,4 +26,5 @@ export class ServicesDao {
     return Boolean(deleted);
   }
 }
+
 

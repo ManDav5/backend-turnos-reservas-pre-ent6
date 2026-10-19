@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import mongoosePaginate from "mongoose-paginate-v2";
 
 const serviceSchema = new mongoose.Schema(
   {
@@ -15,4 +16,7 @@ const serviceSchema = new mongoose.Schema(
   }
 );
 
+serviceSchema.plugin(mongoosePaginate);
+
 export default mongoose.model("Service", serviceSchema);
+

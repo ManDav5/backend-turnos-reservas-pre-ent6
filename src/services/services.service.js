@@ -2,20 +2,29 @@ import { ServicesRepository } from '../repositories/services.repository.js';
 
 const servicesRepository = new ServicesRepository();
 
-export const getServices = async (limit) => {
-  const services = await servicesRepository.getAll();
+export const getServices = async ({ limit = 10, page = 1, sort, query } = {}) => {
+  const filter = {};
 
-  if (limit) {
-    const parsedLimit = Number(limit);
-    if (isNaN(parsedLimit) || parsedLimit <= 0) {
-      const error = new Error('El parámetro limit debe ser un número positivo');
-      error.statusCode = 400;
-      throw error;
+  if (query) {
+    if (query === 'true' || query === 'false') {
+      filter.available = query === 'true';
+    } else {
+      filter.category = query;
     }
-    return services.slice(0, parsedLimit);
   }
 
-  return services;
+  const options = {
+    limit: Number(limit) || 10,
+    page: Number(page) || 1,
+    lean: true
+  };
+
+  if (sort) {
+    if (sort === 'asc') options.sort = { price: 1 };
+    if (sort === 'desc') options.sort = { price: -1 };
+  }
+
+  return await servicesRepository.paginate(filter, options);
 };
 
 export const getServiceById = async (id) => {
@@ -31,7 +40,6 @@ export const getServiceById = async (id) => {
 export const createService = async (serviceData) => {
   const { name, description, duration, price, category } = serviceData;
 
-  // Validación de campos obligatorios
   if (!name || !description || duration === undefined || price === undefined || !category) {
     const error = new Error('Campos requeridos: name, description, duration, price, category');
     error.statusCode = 400;
@@ -60,4 +68,5 @@ export const deleteService = async (id) => {
   }
   return deleted;
 };
+
 
